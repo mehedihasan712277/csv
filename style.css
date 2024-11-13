@@ -78,15 +78,21 @@ body {
 /* Certificate Styling */
 .certificate {
     position: relative;
-    width: 750px;
-    padding: 40px;
+    width: 818px;
+    padding: 68.5px;
     background: #fff url('bg.png') center/cover no-repeat;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    /* border: 1px solid #ccc; */
+    /* border-radius: 8px; */
+    /* box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); */
     text-align: center;
-    margin: 20px auto;
+    margin: 0px auto;
 
+}
+
+#certificateContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .border-top,
@@ -211,12 +217,18 @@ body {
     /* Center align items vertically */
     margin-top: 40px;
     /* Space above the footer */
-    padding-top: 20px;
+    /* padding-top: 20px; */
     /* Space inside the footer at the top */
     border-top: 1px solid #ddd;
     /* Optional: top border */
-    height: 100px;
+    height: 200px;
+    /* background-color: red; */
     /* Fixed height for the footer */
+}
+
+.ceo-signature {
+    height: 80px;
+    width: 100px;
 }
 
 .signature {
@@ -225,7 +237,7 @@ body {
     flex: auto;
     /* Allow signatures to grow and fill space */
     font-size: 1.1em;
-    margin-bottom: 50px;
+    /* margin-bottom: 50px; */
 
 
 }
