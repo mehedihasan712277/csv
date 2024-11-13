@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Generator</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+
+    <div class="form-container">
+        <h3>Enter Details</h3>
+        <form id="certificateForm">
+            <label for="recipient-name">Recipient Name:</label>
+            <input type="text" id="recipient-name" placeholder="Enter recipient's name"><br><br>
+
+            <label for="assignment-score">Assignment Score (%)</label>
+            <input type="number" id="assignment-score" placeholder="Assignment Score"><br><br>
+
+            <label for="quiz-score">Quiz Score (%)</label>
+            <input type="number" id="quiz-score" placeholder="Quiz Score"><br><br>
+
+            <label for="live-test-score">Live Test Score (%)</label>
+            <input type="number" id="live-test-score" placeholder="Live Test Score"><br><br>
+
+            <label for="ctf-score">CTF Score (%)</label>
+            <input type="number" id="ctf-score" placeholder="CTF Score"><br><br>
+
+            <label for="student-id">Student ID</label>
+            <input type="text" id="student-id" placeholder="Enter Student ID"><br><br>
+
+            <label for="course-duration">Course Duration</label>
+            <input type="text" id="course-duration" placeholder="Enter Course Duration (e.g., 6 months)"><br><br>
+
+            <button type="button" onclick="generateCertificateFromForm()">Generate Certificate</button>
+            <button type="button" onclick="downloadAllPDFs()">Download All PDFs</button>
+        </form>
+        <br>
+        <input type="file" id="csv-upload" onchange="handleCSVUpload(event)">
+    </div>
+
+    <div id="certificateContainer"></div>
+
+    <script>
+        // Function to generate a single certificate based on the form data
+        function generateCertificate(name, assignmentScore, quizScore, liveTestScore, ctfScore, studentID, courseDuration) {
+            const certificate = document.createElement("div");
+            certificate.className = "certificate";
+            certificate.id = "certificate"; // Add an ID for PDF generation
+            certificate.innerHTML = `
+      <div class="content">
+          <div class="header">
+              <img src="logo.png" alt="CB Logo" class="logo">
+              <h1>Cyber Bangla</h1>
+          </div>
+          <div class="title">
+              <h2>CERTIFICATE</h2>
+              <p>of Assessment</p>
+          </div>
+          <div class="recipient">
+              <h3>${name}</h3>
+              <p>Has successfully completed the online live course on</p>
+          </div>
+          <div class="course-name">
+              <h4>COURSE ETHICAL HACKING AND CYBERSECURITY</h4>
+              <p>We commend <strong>${name}</strong> for exemplary performance
+                  throughout the course and dedication to enhancing expertise in cybersecurity.</p>
+          </div>
+          <div class="results-table">
+              <table>
+                  <thead>
+                      <tr>
+                          <th>Exam Type</th>
+                          <th>Result (%)</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      <tr>
+                          <td>Assignment</td>
+                          <td>${assignmentScore}%</td>
+                      </tr>
+                      <tr>
+                          <td>Quiz</td>
+                          <td>${quizScore}%</td>
+                      </tr>
+                      <tr>
+                          <td>Live Test</td>
+                          <td>${liveTestScore}%</td>
+                      </tr>
+                      <tr>
+                          <td>CTF</td>
+                          <td>${ctfScore}%</td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+          <div class="footer">
+              <div class="signature">
+                  <p>Foysal Hossain</p>
+                  <span>Founder & CEO</span>
+              </div>
+              <div class="signature">
+                  <p>Rakib Ahmed</p>
+                  <span>Managing Director</span>
+              </div>
+          </div>
+          <div class="details">
+              <p>STUDENT ID: <span>${studentID}</span></p>
+              <p>COURSE DURATION: <span>${courseDuration}</span></p>
+          </div>
+      </div>
+    `;
+            document.getElementById("certificateContainer").appendChild(certificate);
+        }
+
+        // Generate certificates based on form input
+        function generateCertificateFromForm() {
+            const name = document.getElementById("recipient-name").value;
+            const assignmentScore = document.getElementById("assignment-score").value;
+            const quizScore = document.getElementById("quiz-score").value;
+            const liveTestScore = document.getElementById("live-test-score").value;
+            const ctfScore = document.getElementById("ctf-score").value;
+            const studentID = document.getElementById("student-id").value;
+            const courseDuration = document.getElementById("course-duration").value;
+
+            generateCertificate(name, assignmentScore, quizScore, liveTestScore, ctfScore, studentID, courseDuration);
+        }
+
+        // Handle CSV file upload and generate certificates for all students
+        function handleCSVUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type === "text/csv") {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const csvContent = e.target.result;
+                    const rows = csvContent.split("\n");
+                    rows.forEach((row, index) => {
+                        if (index > 0 && row.trim() !== "") {
+                            const data = row.split(",");
+                            const [name, assignmentScore, quizScore, liveTestScore, ctfScore, studentID, courseDuration] = data;
+                            generateCertificate(name, assignmentScore, quizScore, liveTestScore, ctfScore, studentID, courseDuration);
+                        }
+                    });
+                };
+                reader.readAsText(file);
+            } else {
+                alert("Please upload a valid CSV file.");
+            }
+        }
+
+        // Download all certificates as PDFs
+        function downloadAllPDFs() {
+            const certificates = document.querySelectorAll(".certificate");
+            certificates.forEach((certificate, index) => {
+                html2pdf(certificate, {
+                    margin: 0,
+                    filename: `certificate_${index + 1}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+                });
+            });
+        }
+    </script>
+
+</body>
+
+</html>
